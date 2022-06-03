@@ -26,7 +26,9 @@ public:
     virtual ~SlamKernel() noexcept = default;
 
     virtual Sophus::SE3f track(const std::vector<ImgData>& imgs, const std::vector<ImuData>& imus) = 0;
+
     virtual void shutdown() = 0;
 
     virtual std::vector<PointVertex> getPointCloudVetices() = 0;
+    virtual std::vector<Sophus::SE3f> getKeyFramePoses() = 0;
 };

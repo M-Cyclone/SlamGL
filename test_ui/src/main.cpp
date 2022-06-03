@@ -9,7 +9,6 @@
 #include <Utils/Settings.h>
 
 #include "core/OrbslamKernel.h"
-#include "render/PointCloud.h"
 #include "render/Camera.h"
 #include "render/Renderer.h"
 #include "utils/Log.h"
@@ -143,8 +142,7 @@ int main(int argc, char** argv)
 
         Camera::Desc desc;
         auto camera = std::make_shared<Camera>(desc);
-        auto pc = std::make_shared<PointCloud>();
-        auto renderer = new Renderer(window, pc, camera);
+        auto renderer = new Renderer(window, camera);
 
 
         Timer timer;
@@ -155,16 +153,18 @@ int main(int argc, char** argv)
                 auto [imgs, imus] = data_loader.getNextData();
                 Sophus::SE3f pose = slam_kernel->track(imgs, imus);
                 camera->setPose(pose);
+                camera->setAspectRatio((float)imgs[0].image.cols / (float)imgs[0].image.rows);
 
-                pc->setData(slam_kernel->getPointCloudVetices());
+                renderer->setPointCloud(slam_kernel->getPointCloudVetices());
+                renderer->setKeyFrames(slam_kernel->getKeyFramePoses());
             }
 
             glfwPollEvents();
 
             float dt = timer.mark() * 1e-6;
-            if(dt < Timer::k_frame_delte_time)
+            if(dt < Timer::k_frame_delte_time * 2)
             {
-                std::this_thread::sleep_for(std::chrono::milliseconds(size_t(Timer::k_frame_delte_time - dt)));
+                std::this_thread::sleep_for(std::chrono::milliseconds(size_t(Timer::k_frame_delte_time * 2 - dt)));
                 dt = Timer::k_frame_delte_time;
             }
         }

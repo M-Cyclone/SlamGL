@@ -8,6 +8,7 @@
 #include <Utils/ImuTypes.h>
 
 #include "Map/MapPoint.h"
+#include "sophus/se3.hpp"
 #include "utils/Log.h"
 
 
@@ -25,10 +26,8 @@ Sophus::SE3f OrbslamKernel::track(const std::vector<ImgData>& imgs, const std::v
     float scale = m_orb_system.GetImageScale();
     int new_width = imgs[0].image.cols * scale;
     int new_height = imgs[0].image.rows * scale;
-    APP_INFO("Resize image. New Size: ({0}, {1})", new_width, new_height);
     cv::resize(imgs[0].image, imgs[0].image, cv::Size(new_width, new_height));
 
-    APP_INFO("Reconstruct imu data.");
     std::vector<ORB_SLAM3::IMU::Point> imu_points;
     for(const auto& imu : imus)
     {
@@ -42,11 +41,10 @@ Sophus::SE3f OrbslamKernel::track(const std::vector<ImgData>& imgs, const std::v
             imu.time_stamp * 1e-9
         );
     }
-    APP_INFO("Imu data count: {0}", imu_points.size());
-
-    APP_INFO("ORBSLAM tracking new frame data.");
+    
     Sophus::SE3f pose = m_orb_system.TrackMonocular(imgs[0].image, imgs[0].time_stamp * 1e-9, imu_points);
-    APP_INFO("Handle new frame end.");
+
+    APP_INFO("\n");
 
     return pose;
 }
@@ -72,5 +70,24 @@ auto OrbslamKernel::getPointCloudVetices() -> std::vector<PointVertex>
         pvs.push_back({glm::vec3(eigen_pos.x(), eigen_pos.y(), eigen_pos.z()), glm::vec3(1.0f, 1.0f, 1.0f)});
     }
 
+    APP_INFO("Global map point count: {0}. Local map point count: {1}", local_mp.size(), all_mp.size());
+
     return pvs;
+}
+
+auto OrbslamKernel::getKeyFramePoses() -> std::vector<Sophus::SE3f>
+{
+    std::vector<Sophus::SE3f> poses;
+
+    auto all_kfs = m_orb_system.getAtlas().GetAllKeyFrames();
+    for(auto kf : all_kfs)
+    {
+        if(!kf || kf->isBad()) continue;
+
+        poses.push_back(kf->GetPose());
+    }
+
+    APP_INFO("Global keyframe count: {0}", all_kfs.size());
+
+    return poses;
 }

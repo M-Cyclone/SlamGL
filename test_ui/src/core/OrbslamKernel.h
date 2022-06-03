@@ -24,6 +24,7 @@ public:
     }
     
     std::vector<PointVertex> getPointCloudVetices() override;
+    std::vector<Sophus::SE3f> getKeyFramePoses() override;
 
 private:
     ORB_SLAM3::System m_orb_system;
