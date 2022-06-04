@@ -36,12 +36,6 @@ public:
         m_pose = pose;
     }
 
-    void setAspectRatio(float ar)
-    {
-        std::unique_lock<std::shared_mutex> lock(m_data_mutex);
-        m_aspect_radio = ar;
-    }
-
     glm::mat4 getProj() const
     {
         std::shared_lock<std::shared_mutex> lock(m_data_mutex);

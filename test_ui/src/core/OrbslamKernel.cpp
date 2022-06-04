@@ -1,14 +1,16 @@
 #include "OrbslamKernel.h"
+#include <algorithm>
 #include <memory>
 #include <vector>
 #include <unordered_set>
 
+#include <sophus/se3.hpp>
 #include <Eigen/Core>
 
 #include <Utils/ImuTypes.h>
+#include <Map/MapPoint.h>
+#include <Frame/KeyFrame.h>
 
-#include "Map/MapPoint.h"
-#include "sophus/se3.hpp"
 #include "utils/Log.h"
 
 
@@ -80,11 +82,15 @@ auto OrbslamKernel::getKeyFramePoses() -> std::vector<Sophus::SE3f>
     std::vector<Sophus::SE3f> poses;
 
     auto all_kfs = m_orb_system.getAtlas().GetAllKeyFrames();
+    std::sort(all_kfs.begin(), all_kfs.end(), [](const ORB_SLAM3::KeyFrame* kf1, const ORB_SLAM3::KeyFrame* kf2)
+    {
+        return kf1->mnFrameId < kf2->mnFrameId;
+    });
     for(auto kf : all_kfs)
     {
         if(!kf || kf->isBad()) continue;
 
-        poses.push_back(kf->GetPose());
+        poses.push_back(kf->GetPoseInverse());
     }
 
     APP_INFO("Global keyframe count: {0}", all_kfs.size());

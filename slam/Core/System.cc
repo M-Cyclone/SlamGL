@@ -491,11 +491,11 @@ Sophus::SE3f System::TrackMonocular(const cv::Mat &im, const double &timestamp, 
     mTrackedMapPoints = mpTracker->mCurrentFrame.mvpMapPoints;
     mTrackedKeyPointsUn = mpTracker->mCurrentFrame.mvKeysUn;
 
-    std::cout
-        << "Current global map point count: [" << mpAtlas->GetAllMapPoints().size()
-        << "]    Current local map point count: [" << mpAtlas->GetReferenceMapPoints().size()
-        << "]    Current keyframe count: [" << mpAtlas->GetAllKeyFrames().size()
-        << "]" << std::endl;
+    // std::cout
+    //     << "Current global map point count: [" << mpAtlas->GetAllMapPoints().size()
+    //     << "]    Current local map point count: [" << mpAtlas->GetReferenceMapPoints().size()
+    //     << "]    Current keyframe count: [" << mpAtlas->GetAllKeyFrames().size()
+    //     << "]" << std::endl;
 
     return Tcw;
 }

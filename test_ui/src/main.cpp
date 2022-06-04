@@ -153,7 +153,6 @@ int main(int argc, char** argv)
                 auto [imgs, imus] = data_loader.getNextData();
                 Sophus::SE3f pose = slam_kernel->track(imgs, imus);
                 camera->setPose(pose);
-                camera->setAspectRatio((float)imgs[0].image.cols / (float)imgs[0].image.rows);
 
                 renderer->setPointCloud(slam_kernel->getPointCloudVetices());
                 renderer->setKeyFrames(slam_kernel->getKeyFramePoses());
