@@ -101,6 +101,8 @@ void Renderer::renderMain()
     Timer timer;
     while(m_is_running)
     {
+        static float dt = Timer::k_frame_delte_time;
+
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -216,6 +218,8 @@ void Renderer::renderMain()
             ImGui_ImplGlfw_NewFrame();
             ImGui::NewFrame();
 
+            ImGui::Text("Current FPS: %.3f", 1000.0f / dt);
+
             if (ImGui::CollapsingHeader("Render Options"))
             {
                 if (ImGui::TreeNode("Point Cloud Options"))
@@ -260,7 +264,7 @@ void Renderer::renderMain()
         }
 
 
-        float dt = timer.mark() * 1e-6; // timer gives the time in nanoseconds.
+        dt = timer.mark() * 1e-6; // timer gives the time in nanoseconds.
         if (dt < Timer::k_frame_delte_time)
         {
             std::this_thread::sleep_for(std::chrono::milliseconds(size_t(Timer::k_frame_delte_time - dt)));
