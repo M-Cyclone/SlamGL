@@ -18,6 +18,7 @@
 
 #include "MapPoint.h"
 
+#include "Map/Map.h"
 #include "Feature/ORBmatcher.h"
 
 namespace ORB_SLAM3

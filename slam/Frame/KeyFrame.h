@@ -24,13 +24,10 @@
 #include <DBoW2/BowVector.h>
 #include <DBoW2/FeatureVector.h>
 
-#include "Map/MapPoint.h"
-
 #include "Feature/ORBVocabulary.h"
 #include "Feature/ORBextractor.h"
 
 #include "Frame/Frame.h"
-#include "Frame/KeyFrameDatabase.h"
 
 #include "Utils/ImuTypes.h"
 

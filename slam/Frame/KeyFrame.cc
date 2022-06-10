@@ -19,6 +19,8 @@
 #include "KeyFrame.h"
 #include <mutex>
 
+#include "Frame/KeyFrameDatabase.h"
+#include "Map/MapPoint.h"
 #include "Utils/Converter.h"
 #include "Utils/ImuTypes.h"
 

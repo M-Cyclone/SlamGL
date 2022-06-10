@@ -6,6 +6,7 @@
 #include <Utils/Settings.h>
 #include <Feature/ORBVocabulary.h>
 
+#include "Frame/KeyFrame.h"
 #include "SlamKernel.h"
 #include "utils/Log.h"
 
@@ -25,6 +26,11 @@ public:
     
     std::vector<PointVertex> getPointCloudVetices() override;
     std::vector<Sophus::SE3f> getKeyFramePoses() override;
+
+    std::vector<ORB_SLAM3::KeyFrame*> getKeyFrames()
+    {
+        return m_orb_system.getAtlas().GetAllKeyFrames();
+    }
 
 private:
     ORB_SLAM3::System m_orb_system;

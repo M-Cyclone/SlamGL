@@ -26,8 +26,6 @@
 #include "Frame/Frame.h"
 #include "Frame/KeyFrame.h"
 
-#include "Map/Map.h"
-
 #include "Utils/Converter.h"
 
 namespace ORB_SLAM3

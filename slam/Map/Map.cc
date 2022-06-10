@@ -19,6 +19,8 @@
 
 #include "Map.h"
 
+#include "Frame/KeyFrameDatabase.h"
+
 namespace ORB_SLAM3
 {
 
