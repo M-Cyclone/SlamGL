@@ -42,7 +42,7 @@ namespace helper
 
         if(!init)
         {
-            settingDesc.sensor = ORB_SLAM3::System::eSensor::MONOCULAR;
+            settingDesc.sensor = ORB_SLAM3::System::eSensor::IMU_MONOCULAR;
             settingDesc.cameraInfo.cameraType = ORB_SLAM3::Settings::CameraType::PinHole;
             settingDesc.cameraInfo.fx = 458.654f;
             settingDesc.cameraInfo.fy = 457.296f;
@@ -166,7 +166,7 @@ int main(int argc, char** argv)
             if(data_loader.hasNextData())
             {
                 auto [imgs, imus] = data_loader.getNextData();
-                Sophus::SE3f pose = slam_kernel->track(imgs, {});
+                Sophus::SE3f pose = slam_kernel->track(imgs, imus);
                 camera->setPose(pose);
 
                 renderer->setPointCloud(slam_kernel->getPointCloudVetices());
@@ -246,7 +246,7 @@ int main(int argc, char** argv)
             auto keyframes = slam_kernel->getKeyFrames();
             for(auto kf : keyframes)
             {
-                auto keypoints = kf->mvKeys;
+                auto keypoints = kf->mvKeysUn;
                 auto mappoints = kf->GetMapPointMatches();
 
                 KeyFrameInfo kfi;
