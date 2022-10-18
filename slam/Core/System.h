@@ -28,18 +28,18 @@
 
 #include <opencv2/core/core.hpp>
 
-#include "Thread/Tracking.h"
-#include "Thread/LocalMapping.h"
-#include "Thread/LoopClosing.h"
+#include "threads/Tracking.h"
+#include "threads/LocalMapping.h"
+#include "threads/LoopClosing.h"
 
-#include "Map/Atlas.h"
+#include "map/Atlas.h"
 
-#include "Frame/KeyFrameDatabase.h"
+#include "frame/KeyFrameDatabase.h"
 
-#include "Feature/ORBVocabulary.h"
+#include "feature/ORBVocabulary.h"
 
-#include "Utils/ImuTypes.h"
-#include "Utils/Settings.h"
+#include "utils/ImuTypes.h"
+#include "utils/Settings.h"
 
 namespace ORB_SLAM3
 {
@@ -185,8 +185,10 @@ public:
 
     float GetImageScale();
 
-    Atlas& getAtlas() { return *mpAtlas; }
-    const Atlas& getAtlas() const { return *mpAtlas; }
+    Atlas& getAtlas() const { return *mpAtlas; }
+    Tracking& getTracker() const;
+
+    int getTrackingState() const { return mTrackingState; }
 
 private:
 

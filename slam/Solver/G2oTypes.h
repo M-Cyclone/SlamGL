@@ -32,10 +32,10 @@
 #include <Eigen/Geometry>
 #include <Eigen/Dense>
 
-#include "Frame/Frame.h"
-#include "Frame/KeyFrame.h"
+#include "frame/Frame.h"
+#include "frame/KeyFrame.h"
 
-#include "Utils/Converter.h"
+#include "utils/Converter.h"
 
 namespace ORB_SLAM3
 {

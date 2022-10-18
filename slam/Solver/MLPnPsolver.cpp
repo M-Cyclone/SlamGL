@@ -46,14 +46,18 @@
 * SUCH DAMAGE.                                                               *
 ******************************************************************************/
 
-#include "MLPnPsolver.h"
+#include "solver/MLPnPsolver.h"
 
 #include <Eigen/Sparse>
 
-
 namespace ORB_SLAM3 {
-    MLPnPsolver::MLPnPsolver(const Frame &F, const vector<MapPoint *> &vpMapPointMatches):
-            mnInliersi(0), mnIterations(0), mnBestInliers(0), N(0), mpCamera(F.mpCamera){
+    MLPnPsolver::MLPnPsolver(const Frame &F, const vector<MapPoint *> &vpMapPointMatches)
+        : mnInliersi(0)
+        , mnIterations(0)
+        , mnBestInliers(0)
+        , N(0)
+        , mpCamera(F.mpCamera)
+    {
         mvpMapPointMatches = vpMapPointMatches;
         mvBearingVecs.reserve(F.mvpMapPoints.size());
         mvP2D.reserve(F.mvpMapPoints.size());

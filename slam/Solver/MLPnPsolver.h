@@ -52,9 +52,9 @@
 #include <Eigen/Dense>
 #include <Eigen/Sparse>
 
-#include "Map/MapPoint.h"
+#include "map/MapPoint.h"
 
-#include "Frame/Frame.h"
+#include "frame/Frame.h"
 
 namespace ORB_SLAM3{
     class MLPnPsolver {
@@ -62,8 +62,7 @@ namespace ORB_SLAM3{
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
         MLPnPsolver(const Frame &F, const vector<MapPoint*> &vpMapPointMatches);
-
-        ~MLPnPsolver();
+        ~MLPnPsolver() = default;
 
         void SetRansacParameters(double probability = 0.99, int minInliers = 8, int maxIterations = 300, int minSet = 6, float epsilon = 0.4,
                                  float th2 = 5.991);

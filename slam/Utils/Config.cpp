@@ -16,47 +16,15 @@
 * If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef CONFIG_H
-#define CONFIG_H
-#include <cstdio>
-#include <cstdlib>
-#include <string>
+
+#include "utils/Config.h"
 
 namespace ORB_SLAM3
 {
 
-class ViewerConfig
+bool ConfigParser::ParseConfigFile(std::string &strConfigFile)
 {
-
-};
-
-class CameraConfig
-{
-
-};
-
-class ORBExtractorConfig
-{
-
-};
-
-class IMUConfig
-{
-
-};
-
-class ConfigParser
-{
-public:
-    bool ParseConfigFile(std::string &strConfigFile);
-
-private:
-    ViewerConfig mViewerConfig;
-    CameraConfig mCameraConfig;
-    ORBExtractorConfig mORBConfig;
-    IMUConfig mIMUConfig;
-};
-
+    return true;
 }
 
-#endif // CONFIG_H
+}

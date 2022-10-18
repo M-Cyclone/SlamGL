@@ -24,14 +24,14 @@
 #include <DBoW2/BowVector.h>
 #include <DBoW2/FeatureVector.h>
 
-#include "Feature/ORBVocabulary.h"
-#include "Feature/ORBextractor.h"
+#include "feature/ORBVocabulary.h"
+#include "feature/ORBextractor.h"
 
-#include "Frame/Frame.h"
+#include "frame/Frame.h"
 
-#include "Utils/ImuTypes.h"
+#include "utils/ImuTypes.h"
 
-#include "CameraModels/GeometricCamera.h"
+#include "camera_models/GeometricCamera.h"
 
 namespace ORB_SLAM3
 {

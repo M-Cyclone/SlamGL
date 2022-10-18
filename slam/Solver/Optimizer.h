@@ -31,13 +31,13 @@
 #include <g2o/core/robust_kernel_impl.h>
 #include <g2o/solvers/linear_solver_dense.h>
 
-#include "Map/Map.h"
-#include "Map/MapPoint.h"
+#include "map/Map.h"
+#include "map/MapPoint.h"
 
-#include "Frame/Frame.h"
-#include "Frame/KeyFrame.h"
+#include "frame/Frame.h"
+#include "frame/KeyFrame.h"
 
-#include "Thread/LoopClosing.h"
+#include "threads/LoopClosing.h"
 
 namespace ORB_SLAM3
 {

@@ -19,6 +19,7 @@
 
 #ifndef FRAME_H
 #define FRAME_H
+#include <array>
 #include <vector>
 #include <mutex>
 
@@ -32,17 +33,18 @@
 
 #include <opencv2/opencv.hpp>
 
-#include "Feature/ORBVocabulary.h"
+#include "feature/ORBVocabulary.h"
 
-#include "Utils/ImuTypes.h"
-#include "Utils/Converter.h"
-#include "Utils/Settings.h"
+#include "utils/ImuTypes.h"
+#include "utils/Converter.h"
+#include "utils/Settings.h"
 
 
 namespace ORB_SLAM3
 {
-#define FRAME_GRID_ROWS 48
-#define FRAME_GRID_COLS 64
+
+static constexpr int FRAME_GRID_ROWS = 48;
+static constexpr int FRAME_GRID_COLS = 64;
 
 class MapPoint;
 class KeyFrame;
@@ -56,7 +58,7 @@ public:
     Frame();
 
     // Copy constructor.
-    Frame(const Frame &frame);
+    // Frame(const Frame &frame);
 
     // Constructor for stereo cameras.
     Frame(const cv::Mat &imLeft, const cv::Mat &imRight, const double &timeStamp, ORBextractor* extractorLeft, ORBextractor* extractorRight, ORBVocabulary* voc, cv::Mat &K, cv::Mat &distCoef, const float &bf, const float &thDepth, GeometricCamera* pCamera,Frame* pPrevF = static_cast<Frame*>(NULL), const IMU::Calib &ImuCalib = IMU::Calib());
@@ -68,8 +70,22 @@ public:
     Frame(const cv::Mat &imGray, const double &timeStamp, ORBextractor* extractor,ORBVocabulary* voc, GeometricCamera* pCamera, cv::Mat &distCoef, const float &bf, const float &thDepth, Frame* pPrevF = static_cast<Frame*>(NULL), const IMU::Calib &ImuCalib = IMU::Calib());
 
     // Destructor
-    // ~Frame();
+    ~Frame() = default;
 
+private:
+    Frame(const Frame &frame) = delete;
+    Frame& operator=(const Frame&) = default;
+
+public:
+    void copyFrom(const Frame& rhs) noexcept;
+
+    template <typename... Args>
+    void reset(Args&&... args)
+    {
+        this->copyFrom(Frame(std::forward<Args&&>(args)...));
+    }
+
+public:
     // Extract ORB on the image. 0 for left image and 1 for right image.
     void ExtractORB(int flag, const cv::Mat &im, const int x0, const int x1);
 
@@ -121,7 +137,7 @@ public:
     // Backprojects a keypoint (if stereo/depth info available) into 3D world coordinates.
     bool UnprojectStereo(const int &i, Eigen::Vector3f &x3D);
 
-    ConstraintPoseImu* mpcpi;
+    ConstraintPoseImu* mpcpi = nullptr;
 
     bool imuIsPreintegrated();
     void setIntegrated();
@@ -171,7 +187,7 @@ private:
     Eigen::Matrix<float,3,1> mOw;
     Eigen::Matrix<float,3,3> mRcw;
     Eigen::Matrix<float,3,1> mtcw;
-    bool mbHasPose;
+    bool mbHasPose = false;
 
     //Rcw_ not necessary as Sophus has a method for extracting the rotation matrix: Tcw_.rotationMatrix()
     //tcw_ not necessary as Sophus has a method for extracting the translation vector: Tcw_.translation()
@@ -184,7 +200,7 @@ private:
 
     // IMU linear velocity
     Eigen::Vector3f mVw;
-    bool mbHasVelocity;
+    bool mbHasVelocity = false;
 
 public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -193,7 +209,8 @@ public:
     ORBVocabulary* mpORBvocabulary;
 
     // Feature extractor. The right is used only in the stereo case.
-    ORBextractor* mpORBextractorLeft, *mpORBextractorRight;
+    ORBextractor* mpORBextractorLeft = nullptr;
+    ORBextractor* mpORBextractorRight = nullptr;
 
     // Frame timestamp.
     double mTimeStamp;
@@ -249,7 +266,8 @@ public:
     // Keypoints are assigned to cells in a grid to reduce matching complexity when projecting MapPoints.
     static float mfGridElementWidthInv;
     static float mfGridElementHeightInv;
-    std::vector<std::size_t> mGrid[FRAME_GRID_COLS][FRAME_GRID_ROWS];
+    // std::vector<std::size_t> mGrid[FRAME_GRID_COLS][FRAME_GRID_ROWS];
+    std::array<std::array<std::vector<size_t>, FRAME_GRID_ROWS>, FRAME_GRID_COLS> mGrid;
 
     IMU::Bias mPredBias;
 
@@ -260,19 +278,19 @@ public:
     IMU::Calib mImuCalib;
 
     // Imu preintegration from last keyframe
-    IMU::Preintegrated* mpImuPreintegrated;
+    IMU::Preintegrated* mpImuPreintegrated = nullptr;
     KeyFrame* mpLastKeyFrame;
 
     // Pointer to previous frame
     Frame* mpPrevFrame;
-    IMU::Preintegrated* mpImuPreintegratedFrame;
+    IMU::Preintegrated* mpImuPreintegratedFrame = nullptr;
 
     // Current and Next Frame id.
     static long unsigned int nNextId;
     long unsigned int mnId;
 
     // Reference Keyframe.
-    KeyFrame* mpReferenceKF;
+    KeyFrame* mpReferenceKF = nullptr;
 
     // Scale pyramid info.
     int mnScaleLevels;
@@ -298,11 +316,6 @@ public:
 
     int mnDataset;
 
-#ifdef REGISTER_TIMES
-    double mTimeORB_Ext;
-    double mTimeStereoMatch;
-#endif
-
 private:
 
     // Undistort keypoints given OpenCV distortion parameters.
@@ -316,14 +329,15 @@ private:
     // Assign keypoints to the grid for speed up feature matching (called in the constructor).
     void AssignFeaturesToGrid();
 
-    bool mbIsSet;
+    bool mbIsSet = false;
 
-    bool mbImuPreintegrated;
+    bool mbImuPreintegrated = false;
 
     std::mutex *mpMutexImu;
 
 public:
-    GeometricCamera* mpCamera, *mpCamera2;
+    GeometricCamera* mpCamera = nullptr;
+    GeometricCamera* mpCamera2;
 
     //Number of KeyPoints extracted in the left and right images
     int Nleft, Nright;
@@ -341,7 +355,8 @@ public:
     std::vector<Eigen::Vector3f> mvStereo3Dpoints;
 
     //Grid for the right image
-    std::vector<std::size_t> mGridRight[FRAME_GRID_COLS][FRAME_GRID_ROWS];
+    // std::vector<std::size_t> mGridRight[FRAME_GRID_COLS][FRAME_GRID_ROWS];
+    std::array<std::array<std::vector<size_t>, FRAME_GRID_ROWS>, FRAME_GRID_COLS> mGridRight;
 
     Frame(const cv::Mat &imLeft, const cv::Mat &imRight, const double &timeStamp, ORBextractor* extractorLeft, ORBextractor* extractorRight, ORBVocabulary* voc, cv::Mat &K, cv::Mat &distCoef, const float &bf, const float &thDepth, GeometricCamera* pCamera, GeometricCamera* pCamera2, Sophus::SE3f& Tlr,Frame* pPrevF = static_cast<Frame*>(NULL), const IMU::Calib &ImuCalib = IMU::Calib());
 

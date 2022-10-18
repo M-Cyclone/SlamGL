@@ -24,7 +24,6 @@
 #include <Eigen/Core>
 #include <sophus/se3.hpp>
 
-
 namespace ORB_SLAM3
 {
 

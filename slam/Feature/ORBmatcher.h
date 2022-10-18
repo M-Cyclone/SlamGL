@@ -25,10 +25,10 @@
 #include <opencv2/features2d/features2d.hpp>
 #include <sophus/sim3.hpp>
 
-#include "Map/MapPoint.h"
+#include "map/MapPoint.h"
 
-#include "Frame/Frame.h"
-#include "Frame/KeyFrame.h"
+#include "frame/Frame.h"
+#include "frame/KeyFrame.h"
 
 namespace ORB_SLAM3
 {

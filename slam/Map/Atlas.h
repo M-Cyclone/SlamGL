@@ -21,13 +21,13 @@
 #include <set>
 #include <mutex>
 
-#include "Map/Map.h"
-#include "Map/MapPoint.h"
-#include "Frame/KeyFrame.h"
+#include "map/Map.h"
+#include "map/MapPoint.h"
+#include "frame/KeyFrame.h"
 
-#include "CameraModels/GeometricCamera.h"
-#include "CameraModels/Pinhole.h"
-#include "CameraModels/KannalaBrandt8.h"
+#include "camera_models/GeometricCamera.h"
+#include "camera_models/Pinhole.h"
+#include "camera_models/KannalaBrandt8.h"
 
 namespace ORB_SLAM3
 {

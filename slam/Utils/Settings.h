@@ -20,12 +20,12 @@
 #define ORB_SLAM3_SETTINGS_H
 //#include <unistd.h>
 #include <cstdint>
-#include <cstdio>
-#include <cstdlib>
+#include <stdio.h>
+#include <stdlib.h>
 #include <string>
 #include <optional>
 
-#include "CameraModels/GeometricCamera.h"
+#include "camera_models/GeometricCamera.h"
 
 namespace ORB_SLAM3 {
 

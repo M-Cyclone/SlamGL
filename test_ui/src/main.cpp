@@ -40,7 +40,7 @@ namespace helper
         static ::ORB_SLAM3::Settings::SettingDesc settingDesc;
         static bool init = false;
 
-        if(!init)
+        if (!init)
         {
             settingDesc.sensor = ORB_SLAM3::System::eSensor::IMU_MONOCULAR;
             settingDesc.cameraInfo.cameraType = ORB_SLAM3::Settings::CameraType::PinHole;

@@ -24,12 +24,12 @@
 #include <set>
 #include <mutex>
 
-#include "Frame/Frame.h"
-#include "Frame/KeyFrame.h"
+#include "frame/Frame.h"
+#include "frame/KeyFrame.h"
 
-#include "Map/Map.h"
+#include "map/Map.h"
 
-#include "Feature/ORBVocabulary.h"
+#include "feature/ORBVocabulary.h"
 
 namespace ORB_SLAM3
 {

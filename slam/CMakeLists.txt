@@ -7,7 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 if(MSVC)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP /bigobj")
 endif()
 
 add_definitions(-DCOMPILEDWITHC11)
@@ -16,49 +16,34 @@ find_package(OpenCV 4 REQUIRED)
 
 find_package(Threads REQUIRED)
 
-add_library(Orbslam3 STATIC
-    Core/System.cc
+    file(GLOB slam_camera_files  CONFIGURE_DEPENDS ./camera_models/*.h ./camera_models/*.cpp)
+    file(GLOB slam_core_files    CONFIGURE_DEPENDS ./core/*.h ./core/*.cpp)
+    file(GLOB slam_feature_files CONFIGURE_DEPENDS ./feature/*.h ./feature/*.cpp)
+    file(GLOB slam_frame_files   CONFIGURE_DEPENDS ./frame/*.h ./frame/*.cpp)
+    file(GLOB slam_map_files     CONFIGURE_DEPENDS ./map/*.h ./map/*.cpp)
+    file(GLOB slam_solver_files  CONFIGURE_DEPENDS ./solver/*.h ./solver/*.cpp)
+    file(GLOB slam_threads_files CONFIGURE_DEPENDS ./threads/*.h ./threads/*.cpp)
+    file(GLOB slam_utils_files   CONFIGURE_DEPENDS ./utils/*.h ./utils/*.cpp)
 
-    Thread/Tracking.cc
-    Thread/LocalMapping.cc
-    Thread/LoopClosing.cc
-
-    Feature/ORBextractor.cc
-    Feature/ORBmatcher.cc
-
-    Map/Atlas.cc
-    Map/Map.cc
-    Map/MapPoint.cc
-
-    Frame/Frame.cc
-    Frame/KeyFrame.cc
-    Frame/KeyFrameDatabase.cc
-
-    Solver/G2oTypes.cc
-    Solver/Optimizer.cc
-    Solver/OptimizableTypes.cpp
-    Solver/Sim3Solver.cc
-    Solver/MLPnPsolver.cpp
-    Solver/TwoViewReconstruction.cc
-
-    CameraModels/Pinhole.cpp
-    CameraModels/KannalaBrandt8.cpp
-
-    Utils/ImuTypes.cc
-    Utils/GeometricTools.cc
-    Utils/Config.cc
-    Utils/Converter.cc
-    Utils/Settings.cc
-)
+    add_library(${PROJECT_NAME} STATIC
+        ${slam_camera_files}
+        ${slam_core_files}
+        ${slam_feature_files}
+        ${slam_frame_files}
+        ${slam_map_files}
+        ${slam_solver_files}
+        ${slam_threads_files}
+        ${slam_utils_files}
+    )
 target_include_directories(Orbslam3
-    # PUBLIC CameraModels
-    # PUBLIC Core
-    # PUBLIC Feature
-    # PUBLIC Frame
-    # PUBLIC Map
-    # PUBLIC Solver
-    # PUBLIC Thread
-    # PUBLIC Utils
+    # PUBLIC camera_models
+    # PUBLIC core
+    # PUBLIC feature
+    # PUBLIC frame
+    # PUBLIC map
+    # PUBLIC solver
+    # PUBLIC threads
+    # PUBLIC utils
     PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
     # PUBLIC ${project_dir}
     PUBLIC ${external_dir}/Sophus

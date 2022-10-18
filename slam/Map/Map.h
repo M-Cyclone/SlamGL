@@ -22,9 +22,9 @@
 #include <set>
 #include <mutex>
 
-#include "Map/MapPoint.h"
+#include "map/MapPoint.h"
 
-#include "Frame/KeyFrame.h"
+#include "frame/KeyFrame.h"
 
 namespace ORB_SLAM3
 {
