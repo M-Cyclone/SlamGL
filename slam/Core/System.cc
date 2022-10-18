@@ -297,7 +297,8 @@ Sophus::SE3f System::TrackStereo(const cv::Mat &imLeft, const cv::Mat &imRight, 
             // Wait until Local Mapping has effectively stopped
             while(!mpLocalMapper->isStopped())
             {
-                usleep(1000);
+                //usleep(1000);
+                std::this_thread::sleep_for(std::chrono::milliseconds(1000));
             }
 
             mpTracker->InformOnlyTracking(true);
@@ -372,7 +373,8 @@ Sophus::SE3f System::TrackRGBD(const cv::Mat &im, const cv::Mat &depthmap, const
             // Wait until Local Mapping has effectively stopped
             while(!mpLocalMapper->isStopped())
             {
-                usleep(1000);
+                //usleep(1000);
+                std::this_thread::sleep_for(std::chrono::milliseconds(1000));
             }
 
             mpTracker->InformOnlyTracking(true);
@@ -449,7 +451,8 @@ Sophus::SE3f System::TrackMonocular(const cv::Mat &im, const double &timestamp, 
             // Wait until Local Mapping has effectively stopped
             while(!mpLocalMapper->isStopped())
             {
-                usleep(1000);
+                //usleep(1000);
+                std::this_thread::sleep_for(std::chrono::milliseconds(1000));
             }
 
             mpTracker->InformOnlyTracking(true);

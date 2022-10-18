@@ -1,14 +1,26 @@
 # SlamGL
-A modified ORB-SLAM3 project. The rendering module is changed to use OpenGL(GLFW + GLAD) directly.
+A modified ORB-SLAM3 project. The rendering module is changed to use OpenGL(GLFW + GLAD) directly.  
+
+You can run test_ui to run with glfw windows.
 
 # Compile
+## Ubuntu 20.04
 You can configure this project with cmake. The minimum cmake version should be 3.16, which is the default version on ubuntu 20.04.
 
 The following commands can be used to generate executable binary file.
+```
+cmake -B build
+cmake --build build --parallel 4
+```
 
-        cmake -B build
-        cmake --build build --parallel 4
-        
+## Win10
+This project only tested on Visual Studio 2019 (Windows 10 SDK 10.0.19041 and MSVC v142) on Win10 platform.  
+
+You can use the following commands to generate Visual Studio's sln files and compile all sources in Visual Studio.
+```
+cmake -B build -DOpenCV_DIR="(Your MSVC version OpenCV directory which has cmake config files.)"
+```
+
 # Dependences
 This project depends on ORB-SLAM3 and several OpenGL libraries.
 

@@ -17,7 +17,7 @@
 #include "utils/Log.h"
 #include "utils/Timer.h"
 
-extern std::string* p_shader_folder_path;
+extern const std::string* p_shader_folder_path;
 
 Renderer::Renderer(GLFWwindow* window, std::shared_ptr<Camera> camera)
     : m_window(window)

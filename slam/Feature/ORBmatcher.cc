@@ -19,7 +19,8 @@
 
 #include "ORBmatcher.h"
 #include <limits.h>
-#include <stdint-gcc.h>
+//#include <stdint-gcc.h>
+#include <cstdint>
 
 #include <opencv2/core/core.hpp>
 

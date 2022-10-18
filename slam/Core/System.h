@@ -19,7 +19,8 @@
 
 #ifndef SYSTEM_H
 #define SYSTEM_H
-#include <unistd.h>
+//#include <unistd.h>
+#include <cstdint>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>

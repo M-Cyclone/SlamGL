@@ -18,10 +18,12 @@
 
 #ifndef ORB_SLAM3_SETTINGS_H
 #define ORB_SLAM3_SETTINGS_H
-#include <unistd.h>
-#include <stdio.h>
-#include <stdlib.h>
+//#include <unistd.h>
+#include <cstdint>
+#include <cstdio>
+#include <cstdlib>
 #include <string>
+#include <optional>
 
 #include "CameraModels/GeometricCamera.h"
 

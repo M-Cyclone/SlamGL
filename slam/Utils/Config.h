@@ -18,8 +18,8 @@
 
 #ifndef CONFIG_H
 #define CONFIG_H
-
-#include <unistd.h>
+#include <cstdint>
+//#include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>

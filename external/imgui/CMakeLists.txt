@@ -1,9 +1,14 @@
 cmake_minimum_required(VERSION 3.16)
 project("imgui")
 
+set_property( GLOBAL PROPERTY USE_FOLDERS ON )
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+
+if(MSVC)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
+endif()
 
 file(GLOB imgui_files CONFIGURE_DEPENDS ./imgui/*.cpp ./imgui/*.h)
 
@@ -15,7 +20,7 @@ set(imgui_backends_files
     ./imgui/backends/imgui_impl_glfw.cpp
 )
 
-add_library(${PROJECT_NAME} SHARED
+add_library(${PROJECT_NAME} STATIC
     ${imgui_files}
     ${imgui_backends_files}
 )

@@ -1254,7 +1254,10 @@ namespace ORB_SLAM3
                 }
             }
             if (bSleep)
-                usleep(500);
+            {
+                //usleep(500);
+                std::this_thread::sleep_for(std::chrono::milliseconds(500));
+            }
         }
 
         const int n = mvImuFromLastFrame.size() - 1;
@@ -3544,7 +3547,8 @@ namespace ORB_SLAM3
 
         while (!mCurrentFrame.imuIsPreintegrated())
         {
-            usleep(500);
+            //usleep(500);
+            std::this_thread::sleep_for(std::chrono::milliseconds(500));
         }
 
 

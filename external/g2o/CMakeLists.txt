@@ -1,25 +1,40 @@
-cmake_minimum_required(VERSION 3.16)
-project(g2o)
+cmake_minimum_required(VERSION 3.18)
+project("g2o")
 
-# default built type
-if(NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE Release)
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+if(MSVC)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP /bigobj")
 endif()
 
+file(GLOB g2o_core_files    CONFIGURE_DEPENDS ./g2o/core/*.cpp ./g2o/core/*.hpp ./g2o/core/*.h)
+file(GLOB g2o_solvers_files CONFIGURE_DEPENDS ./g2o/solvers/*.h)
+file(GLOB g2o_stuff_files   CONFIGURE_DEPENDS ./g2o/stuff/*.h ./g2o/stuff/*.cpp ./g2o/stuff/*.c)
+file(GLOB g2o_types_files   CONFIGURE_DEPENDS ./g2o/types/*.h ./g2o/types/*.cpp ./g2o/types/*.hpp)
 
-SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -W")
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -W")
-SET(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3 -march=native")
-SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -march=native")
+source_group(core   FILES ${g2o_core_files})
+source_group(solver FILES ${g2o_solvers_files})
+source_group(stuff  FILES ${g2o_stuff_files})
+source_group(types  FILES ${g2o_types_files})
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
-
-
-file(GLOB_RECURSE g2o_files CONFIGURE_DEPENDS *.h *.cpp *.hpp)
-add_library(g2o SHARED ${g2o_files})
-target_include_directories(g2o
-    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/g2o/core
-    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/g2o/types
-    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/g2o/stuff
-    PUBLIC ${external_dir}/eigen3
+add_library(${PROJECT_NAME} STATIC
+    ${g2o_core_files}
+    ${g2o_solvers_files}
+    ${g2o_stuff_files}
+    ${g2o_types_files}
 )
+target_include_directories(${PROJECT_NAME}
+    PUBLIC ./g2o/core
+    PUBLIC ./g2o/types
+    PUBLIC ./g2o/stuff
+    PUBLIC ../eigen3
+)
+if(MSVC)
+    target_compile_definitions(${PROJECT_NAME}
+        PUBLIC -DWINDOWS
+        PUBLIC -D_WINDOWS
+    )
+endif()
