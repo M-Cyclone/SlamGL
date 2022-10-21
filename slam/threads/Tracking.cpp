@@ -39,11 +39,8 @@
 #include "camera_models/Pinhole.h"
 #include "camera_models/KannalaBrandt8.h"
 
-using namespace std;
-
 namespace ORB_SLAM3
 {
-
 
     Tracking::Tracking(System* pSys,
                        ORBVocabulary* pVoc,
@@ -1233,7 +1230,6 @@ namespace ORB_SLAM3
 
     void Tracking::PreintegrateIMU()
     {
-
         if (!mCurrentFrame.mpPrevFrame)
         {
             Verbose::PrintMess("non prev frame ", Verbose::VERBOSITY_NORMAL);
@@ -1461,7 +1457,9 @@ namespace ORB_SLAM3
 
 
         if ((mSensor == System::IMU_MONOCULAR || mSensor == System::IMU_STEREO || mSensor == System::IMU_RGBD) && mpLastKeyFrame)
+        {
             mCurrentFrame.SetNewBias(mpLastKeyFrame->GetImuBias());
+        }
 
         if (mState == NO_IMAGES_YET)
         {
@@ -1517,20 +1515,14 @@ namespace ORB_SLAM3
             // System is initialized. Track Frame.
             bool bOK;
 
-#ifdef REGISTER_TIMES
-            std::chrono::steady_clock::time_point time_StartPosePred = std::chrono::steady_clock::now();
-#endif
-
             // Initial camera pose estimation using motion model or relocalization (if tracking is lost)
             if (!mbOnlyTracking)
             {
-
                 // State OK
                 // Local Mapping is activated. This is the normal behaviour, unless
                 // you explicitly activate the "only tracking" mode.
                 if (mState == OK)
                 {
-
                     // Local Mapping might have changed some MapPoints tracked in last frame
                     CheckReplacedInLastFrame();
 
@@ -1542,22 +1534,25 @@ namespace ORB_SLAM3
                     else
                     {
                         Verbose::PrintMess("TRACK: Track with motion model", Verbose::VERBOSITY_DEBUG);
-                        bOK = TrackWithMotionModel();
-                        if (!bOK)
-                            bOK = TrackReferenceKeyFrame();
+                        //bOK = TrackWithMotionModel();
+                        //if (!bOK)
+                        //{
+                        //    bOK = TrackReferenceKeyFrame();
+                        //}
+
+                        bOK = TrackWithMotionModel() || TrackReferenceKeyFrame();
                     }
 
 
                     if (!bOK)
                     {
-                        if (mCurrentFrame.mnId <= (mnLastRelocFrameId + mnFramesToResetIMU) &&
+                        if ((mCurrentFrame.mnId <= (mnLastRelocFrameId + mnFramesToResetIMU)) &&
                             (mSensor == System::IMU_MONOCULAR || mSensor == System::IMU_STEREO || mSensor == System::IMU_RGBD))
                         {
                             mState = LOST;
                         }
                         else if (pCurrentMap->KeyFramesInMap() > 10)
                         {
-                            // cout << "KF in map: " << pCurrentMap->KeyFramesInMap() << endl;
                             mState = RECENTLY_LOST;
                             mTimeStampLost = mCurrentFrame.mTimeStamp;
                         }
@@ -1569,18 +1564,21 @@ namespace ORB_SLAM3
                 }
                 else
                 {
-
                     if (mState == RECENTLY_LOST)
                     {
                         Verbose::PrintMess("Lost for a short time", Verbose::VERBOSITY_NORMAL);
 
                         bOK = true;
-                        if ((mSensor == System::IMU_MONOCULAR || mSensor == System::IMU_STEREO || mSensor == System::IMU_RGBD))
+                        if (mSensor == System::IMU_MONOCULAR || mSensor == System::IMU_STEREO || mSensor == System::IMU_RGBD)
                         {
                             if (pCurrentMap->isImuInitialized())
+                            {
                                 PredictStateIMU();
+                            }
                             else
+                            {
                                 bOK = false;
+                            }
 
                             if (mCurrentFrame.mTimeStamp - mTimeStampLost > time_recently_lost)
                             {
@@ -1785,13 +1783,6 @@ namespace ORB_SLAM3
                 }
             }
 
-#ifdef REGISTER_TIMES
-            std::chrono::steady_clock::time_point time_EndLMTrack = std::chrono::steady_clock::now();
-
-            double timeLMTrack = std::chrono::duration_cast<std::chrono::duration<double, std::milli>>(time_EndLMTrack - time_StartLMTrack).count();
-            vdLMTrack_ms.push_back(timeLMTrack);
-#endif
-
             // Update drawer
             if (bOK || mState == RECENTLY_LOST)
             {
@@ -1826,23 +1817,15 @@ namespace ORB_SLAM3
                 }
                 mlpTemporalPoints.clear();
 
-#ifdef REGISTER_TIMES
-                std::chrono::steady_clock::time_point time_StartNewKF = std::chrono::steady_clock::now();
-#endif
                 bool bNeedKF = NeedNewKeyFrame();
 
                 // Check if we need to insert a new keyframe
                 // if(bNeedKF && bOK)
-                if (bNeedKF && (bOK || (mInsertKFsLost && mState == RECENTLY_LOST &&
-                    (mSensor == System::IMU_MONOCULAR || mSensor == System::IMU_STEREO || mSensor == System::IMU_RGBD))))
+                if ((bNeedKF) &&
+                    (bOK || (mInsertKFsLost && mState == RECENTLY_LOST && (mSensor == System::IMU_MONOCULAR || mSensor == System::IMU_STEREO || mSensor == System::IMU_RGBD))))
+                {
                     CreateNewKeyFrame();
-
-#ifdef REGISTER_TIMES
-                std::chrono::steady_clock::time_point time_EndNewKF = std::chrono::steady_clock::now();
-
-                double timeNewKF = std::chrono::duration_cast<std::chrono::duration<double, std::milli>>(time_EndNewKF - time_StartNewKF).count();
-                vdNewKF_ms.push_back(timeNewKF);
-#endif
+                }
 
                 // We allow points with high innovation (considererd outliers by the Huber Function)
                 // pass to the new keyframe, so that bundle adjustment will finally decide
@@ -1851,7 +1834,10 @@ namespace ORB_SLAM3
                 for (int i = 0; i < mCurrentFrame.N;i++)
                 {
                     if (mCurrentFrame.mvpMapPoints[i] && mCurrentFrame.mvbOutlier[i])
-                        mCurrentFrame.mvpMapPoints[i] = static_cast<MapPoint*>(NULL);
+                    {
+                        //mCurrentFrame.mvpMapPoints[i] = static_cast<MapPoint*>(NULL);
+                        mCurrentFrame.mvpMapPoints[i] = nullptr;
+                    }
                 }
             }
 
@@ -2033,11 +2019,9 @@ namespace ORB_SLAM3
         }
     }
 
-
     void Tracking::MonocularInitialization()
     {
-
-        if (!mbReadyToInitializate)
+        if (!mbReadyToInitializate) // Have no image before this frame.
         {
             // Set Reference Frame
             if (mCurrentFrame.mvKeys.size() > 100)
@@ -2061,17 +2045,16 @@ namespace ORB_SLAM3
 
                 }
 
-                mbReadyToInitializate = true;
-
-                return;
+                mbReadyToInitializate = true; // Now we have one image, can be used to init.
             }
         }
         else
         {
-            if (((int)mCurrentFrame.mvKeys.size() <= 100) || ((mSensor == System::IMU_MONOCULAR) && (mLastFrame.mTimeStamp - mInitialFrame.mTimeStamp > 1.0)))
+            // This frame doesn't have enough keypoints or if is imu mode and wait to long.
+            if (((int)mCurrentFrame.mvKeys.size() <= 100) ||
+                ((mSensor == System::IMU_MONOCULAR) && (mLastFrame.mTimeStamp - mInitialFrame.mTimeStamp > 1.0)))
             {
                 mbReadyToInitializate = false;
-
                 return;
             }
 
@@ -2089,9 +2072,17 @@ namespace ORB_SLAM3
             Sophus::SE3f Tcw;
             vector<bool> vbTriangulated; // Triangulated Correspondences (mvIniMatches)
 
-            if (mpCamera->ReconstructWithTwoViews(mInitialFrame.mvKeysUn, mCurrentFrame.mvKeysUn, mvIniMatches, Tcw, mvIniP3D, vbTriangulated))
+            bool success = mpCamera->ReconstructWithTwoViews(
+                mInitialFrame.mvKeysUn,
+                mCurrentFrame.mvKeysUn,
+                mvIniMatches,
+                Tcw,
+                mvIniP3D,
+                vbTriangulated);
+
+            if (success)
             {
-                for (size_t i = 0, iend = mvIniMatches.size(); i < iend;i++)
+                for (size_t i = 0, iend = mvIniMatches.size(); i < iend; i++)
                 {
                     if (mvIniMatches[i] >= 0 && !vbTriangulated[i])
                     {
@@ -2101,15 +2092,15 @@ namespace ORB_SLAM3
                 }
 
                 // Set Frame Poses
-                mInitialFrame.SetPose(Sophus::SE3f());
+                mInitialFrame.SetPose(Sophus::SE3f{}); // First frame's pose is zero.
                 mCurrentFrame.SetPose(Tcw);
 
                 CreateInitialMapMonocular();
+
+                std::cout << "[Init Frame Pose]\n" << Tcw.matrix() << std::endl;
             }
         }
     }
-
-
 
     void Tracking::CreateInitialMapMonocular()
     {
@@ -2118,7 +2109,10 @@ namespace ORB_SLAM3
         KeyFrame* pKFcur = new KeyFrame(mCurrentFrame, mpAtlas->GetCurrentMap(), mpKeyFrameDB);
 
         if (mSensor == System::IMU_MONOCULAR)
-            pKFini->mpImuPreintegrated = (IMU::Preintegrated*)(NULL);
+        {
+            //pKFini->mpImuPreintegrated = (IMU::Preintegrated*)(NULL);
+            pKFini->mpImuPreintegrated = nullptr;
+        }
 
 
         pKFini->ComputeBoW();
@@ -2131,11 +2125,14 @@ namespace ORB_SLAM3
         for (size_t i = 0; i < mvIniMatches.size();i++)
         {
             if (mvIniMatches[i] < 0)
+            {
                 continue;
+            }
 
             //Create MapPoint.
-            Eigen::Vector3f worldPos;
-            worldPos << mvIniP3D[i].x, mvIniP3D[i].y, mvIniP3D[i].z;
+            //Eigen::Vector3f worldPos;
+            //worldPos << mvIniP3D[i].x, mvIniP3D[i].y, mvIniP3D[i].z;
+            Eigen::Vector3f worldPos(mvIniP3D[i].x, mvIniP3D[i].y, mvIniP3D[i].z);
             MapPoint* pMP = new MapPoint(worldPos, pKFcur, mpAtlas->GetCurrentMap());
 
             pKFini->AddMapPoint(pMP, i);
@@ -2168,11 +2165,12 @@ namespace ORB_SLAM3
         Optimizer::GlobalBundleAdjustemnt(mpAtlas->GetCurrentMap(), 20);
 
         float medianDepth = pKFini->ComputeSceneMedianDepth(2);
-        float invMedianDepth;
-        if (mSensor == System::IMU_MONOCULAR)
-            invMedianDepth = 4.0f / medianDepth; // 4.0f
-        else
-            invMedianDepth = 1.0f / medianDepth;
+        //float invMedianDepth;
+        //if (mSensor == System::IMU_MONOCULAR)
+        //    invMedianDepth = 4.0f / medianDepth; // 4.0f
+        //else
+        //    invMedianDepth = 1.0f / medianDepth;
+        float invMedianDepth = (mSensor == System::IMU_MONOCULAR) ? (4.0f / medianDepth) : (1.0f / medianDepth);
 
         if (medianDepth < 0 || pKFcur->TrackedMapPoints(1) < 50) // TODO Check, originally 100 tracks
         {

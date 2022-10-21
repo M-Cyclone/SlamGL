@@ -343,4 +343,6 @@ int main(int argc, char** argv)
     {
         APP_ERROR("Exception Caught.");
     }
+
+    system("pause");
 }
