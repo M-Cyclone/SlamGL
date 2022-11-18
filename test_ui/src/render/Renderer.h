@@ -1,10 +1,10 @@
 #pragma once
+#include <atomic>
 #include <memory>
 #include <thread>
-#include <atomic>
 
-#include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <glad/glad.h>
 
 #include <sophus/se3.hpp>
 
@@ -16,14 +16,11 @@ class Renderer
 {
 public:
     Renderer(GLFWwindow* window, std::shared_ptr<Camera> camera);
-    Renderer(const Renderer&) = delete;
+    Renderer(const Renderer&)            = delete;
     Renderer& operator=(const Renderer&) = delete;
     ~Renderer() noexcept;
 
-    void shutdown()
-    {
-        m_is_running = false;
-    }
+    void shutdown() { m_is_running = false; }
 
     bool isRunning() const { return m_is_running; }
 
@@ -44,13 +41,13 @@ private:
     void renderMain();
 
 private:
-    GLFWwindow* m_window = nullptr;
+    GLFWwindow*             m_window = nullptr;
     std::shared_ptr<Camera> m_camera;
-    std::thread m_render_thread;
+    std::thread             m_render_thread;
 
-    mutable std::shared_mutex m_data_mutex;
+    mutable std::shared_mutex            m_data_mutex;
     std::vector<SlamKernel::PointVertex> m_vertices;
-    std::vector<Sophus::SE3f> m_keyframe_poses;
+    std::vector<Sophus::SE3f>            m_keyframe_poses;
 
     std::atomic_bool m_is_running = true;
 };

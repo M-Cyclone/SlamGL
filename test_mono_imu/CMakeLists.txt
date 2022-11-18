@@ -17,6 +17,3 @@ target_link_libraries(${PROJECT_NAME}
     Orbslam3
     ${OpenCV_LIBS}
 )
-target_compile_definitions(${PROJECT_NAME}
-    PUBLIC -DCOMPILEDWITHC11
-)
